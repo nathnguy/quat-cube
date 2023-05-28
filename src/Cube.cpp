@@ -86,8 +86,8 @@ void Cube::drawLine(SDL_Renderer *renderer, Vector3D displayPoints[], int p1, in
 void Cube::getDisplayPoints(Vector3D displayPoints[]) const {
     // for now: Camera starts at (250, 250, 0) with no rotation
     
-    Vector3D cam(0, 0, -300); // TODO: movable camera
-    const float focalDistance = 200.0f;
+    Vector3D cam(0, 0, -350); // TODO: movable camera
+    const float focalDistance = 300.0f;
     
     for (int i = 0; i < NUM_POINTS; ++i) {
         float x = this->points[i].x - cam.x; // display x
