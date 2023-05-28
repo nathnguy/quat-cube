@@ -10,11 +10,13 @@
 
 #include <SDL.h>
 #include "Vector3D.hpp"
+#include "Camera.hpp"
 
 class Cube {
 public:
     float length;
     Vector3D* position; // center of cube
+    Camera* cam;
     
     Cube(float length);
     Cube(float length, float x, float y, float z);

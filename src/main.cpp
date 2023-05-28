@@ -8,16 +8,14 @@
 #include <SDL.h>
 #include <SDL_image.h>
 #include "Cube.hpp"
+#include "Camera.hpp"
 
 void render(SDL_Renderer*, const Cube&);
-void handleKeyPress(SDL_KeyboardEvent* key, bool rotatingAxes[]);
-void handleKeyRelease(SDL_KeyboardEvent* key, bool rotatingAxes[]);
+void handleKeyPress(SDL_KeyboardEvent* key, bool rotatingAxes[], float& camVelocity);
+void handleKeyRelease(SDL_KeyboardEvent* key, bool rotatingAxes[], float& camVelocity);
 void keyRotate(Cube& cube, Vector3D axes[], bool rotatingAxes[]);
 
 int main(int argc, const char * argv[]) {
-    
-    const int WINDOW_WIDTH = 500;
-    const int WINDOW_HEIGHT = 500;
     
     const int FPS = 60;
     const int FRAME_DELAY = 1000 / FPS;
@@ -30,7 +28,7 @@ int main(int argc, const char * argv[]) {
 
     // Create window
     SDL_Window* window = SDL_CreateWindow("quat-cube", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED,
-                                          WINDOW_WIDTH, WINDOW_HEIGHT, 0);
+                                          Camera::WINDOW_WIDTH, Camera::WINDOW_HEIGHT, 0);
     if (window == nullptr) { return 1; }
     
     SDL_Renderer* renderer = SDL_CreateRenderer(window, -1, 0);
@@ -48,6 +46,7 @@ int main(int argc, const char * argv[]) {
     };
     
     bool rotatingAxes[] = {false, false, false, false};
+    float camVelocity = 0.0f;
 
     // Loop forever to stop window from closing right away.
     bool running = true;
@@ -62,10 +61,10 @@ int main(int argc, const char * argv[]) {
                     running = false;
                     break;
                 case SDL_KEYDOWN:
-                    handleKeyPress(&event.key, rotatingAxes);
+                    handleKeyPress(&event.key, rotatingAxes, camVelocity);
                     break;
                 case SDL_KEYUP:
-                    handleKeyRelease(&event.key, rotatingAxes);
+                    handleKeyRelease(&event.key, rotatingAxes, camVelocity);
                     break;
                 default:
                     break;
@@ -74,6 +73,9 @@ int main(int argc, const char * argv[]) {
         }
         
         keyRotate(cube, axes, rotatingAxes);
+        
+        // zoom in/out camera
+        cube.cam->position->z += camVelocity;
         
         render(renderer, cube);
         
@@ -105,7 +107,7 @@ void render(SDL_Renderer* renderer, const Cube& cube) {
     SDL_RenderPresent(renderer);
 }
 
-void handleKeyPress(SDL_KeyboardEvent* key, bool rotatingAxes[]) {
+void handleKeyPress(SDL_KeyboardEvent* key, bool rotatingAxes[], float& camVelocity) {
     switch(key->keysym.sym) {
         case SDLK_w:
             rotatingAxes[0] = true;
@@ -119,12 +121,22 @@ void handleKeyPress(SDL_KeyboardEvent* key, bool rotatingAxes[]) {
         case SDLK_d:
             rotatingAxes[3] = true;
             break;
+        case SDLK_i:
+            if (camVelocity < Camera::ZOOM_SPEED) {
+                camVelocity += Camera::ZOOM_SPEED;
+            }
+            break;
+        case SDLK_o:
+            if (camVelocity > -Camera::ZOOM_SPEED) {
+                camVelocity -= Camera::ZOOM_SPEED;
+            }
+            break;
         default:
             break;
     }
 }
 
-void handleKeyRelease(SDL_KeyboardEvent* key, bool rotatingAxes[]) {
+void handleKeyRelease(SDL_KeyboardEvent* key, bool rotatingAxes[], float& camVelocity) {
     switch(key->keysym.sym) {
         case SDLK_w:
             rotatingAxes[0] = false;
@@ -137,6 +149,16 @@ void handleKeyRelease(SDL_KeyboardEvent* key, bool rotatingAxes[]) {
             break;
         case SDLK_d:
             rotatingAxes[3] = false;
+            break;
+        case SDLK_i:
+            if (camVelocity >= Camera::ZOOM_SPEED) {
+                camVelocity -= Camera::ZOOM_SPEED;
+            }
+            break;
+        case SDLK_o:
+            if (camVelocity <= -Camera::ZOOM_SPEED) {
+                camVelocity += Camera::ZOOM_SPEED;
+            }
             break;
         default:
             break;

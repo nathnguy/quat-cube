@@ -11,17 +11,20 @@
 Cube::Cube(float length) {
     this->length = length;
     this->position = new Vector3D();
+    this->cam = new Camera();
     initPoints();
 }
 
 Cube::Cube(float length, float x, float y, float z) {
     this->length = length;
     this->position = new Vector3D(x, y, z);
+    this->cam = new Camera();
     initPoints();
 }
 
 Cube::~Cube() {
     delete this->position;
+    delete this->cam;
 }
 
 void Cube::draw(SDL_Renderer* renderer) const {
@@ -82,19 +85,22 @@ void Cube::drawLine(SDL_Renderer *renderer, Vector3D displayPoints[], int p1, in
 }
 
 void Cube::getDisplayPoints(Vector3D displayPoints[]) const {
-    Vector3D cam(0, 0, -350.0f); // TODO: movable camera
-    const float focalDistance = 300.0f;
+//    Vector3D cam(0, 0, -350.0f); // TODO: movable camera
+//    const float focalDistance = 300.0f;
+    
+    const float xOffset = Camera::WINDOW_WIDTH / 2.0f;
+    const float yOffset = Camera::WINDOW_HEIGHT / 2.0f;
     
     for (int i = 0; i < NUM_POINTS; ++i) {
-        float x = this->points[i].x - cam.x; // display x
-        float y = this->points[i].y - cam.y; // display y
-        float d_z = this->points[i].z - cam.z; // cam transform z
+        float x = this->points[i].x - this->cam->position->x; // display x
+        float y = this->points[i].y - this->cam->position->y; // display y
+        float d_z = this->points[i].z - this->cam->position->z; // cam transform zs
         
-        if (d_z >= 0) {
+        if (this->cam->inView(this->points[i])) {
             // check that point is in front of the camera
             // FUTURE: add more points so cube can be zoomed into
-            x = (focalDistance / d_z) * x + cam.x + 250; // 250 = window width / 2
-            y = (focalDistance / d_z) * y + cam.y + 250;
+            x = (Camera::FOCAL_DISTANCE / d_z) * x + this->cam->position->x + xOffset;
+            y = (Camera::FOCAL_DISTANCE / d_z) * y + this->cam->position->y + yOffset;
             
             displayPoints[i].x = x;
             displayPoints[i].y = y;
