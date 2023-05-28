@@ -8,6 +8,8 @@
 #include "Vector3D.hpp"
 #include <math.h>
 
+const Vector3D Vector3D::ZERO;
+
 Vector3D::Vector3D() {
     this->x = 0.0f;
     this->y = 0.0f;

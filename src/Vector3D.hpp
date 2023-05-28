@@ -11,6 +11,8 @@
 class Vector3D {
 public:
     
+    static const Vector3D ZERO;
+    
     float x;
     float y;
     float z;
@@ -39,7 +41,5 @@ public:
     float length();
     
 };
-
-extern Vector3D ZERO_VEC;
 
 #endif /* Vector3D_hpp */

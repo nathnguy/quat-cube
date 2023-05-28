@@ -8,8 +8,6 @@
 #include "Cube.hpp"
 #include "Quaternion.hpp"
 
-Vector3D ZERO_VEC;
-
 Cube::Cube(float length) {
     this->length = length;
     this->position = new Vector3D();
@@ -75,8 +73,8 @@ void Cube::rotate(const Vector3D& axis, float radians) {
 // private
 
 void Cube::drawLine(SDL_Renderer *renderer, Vector3D displayPoints[], int p1, int p2) const {
-    if (!displayPoints[p1].equals(ZERO_VEC) &&
-        !displayPoints[p2].equals(ZERO_VEC)) {
+    if (!displayPoints[p1].equals(Vector3D::ZERO) &&
+        !displayPoints[p2].equals(Vector3D::ZERO)) {
         SDL_RenderDrawLine(renderer,
                            displayPoints[p1].x, displayPoints[p1].y,
                            displayPoints[p2].x, displayPoints[p2].y);
@@ -84,8 +82,6 @@ void Cube::drawLine(SDL_Renderer *renderer, Vector3D displayPoints[], int p1, in
 }
 
 void Cube::getDisplayPoints(Vector3D displayPoints[]) const {
-    // for now: Camera starts at (250, 250, 0) with no rotation
-    
     Vector3D cam(0, 0, -350); // TODO: movable camera
     const float focalDistance = 300.0f;
     
@@ -97,7 +93,7 @@ void Cube::getDisplayPoints(Vector3D displayPoints[]) const {
         if (d_z > 0) {
             // check that point is in front of the camera
             // FUTURE: add more points so cube can be zoomed into
-            x = (focalDistance / d_z) * x + cam.x + 250;
+            x = (focalDistance / d_z) * x + cam.x + 250; // 250 = window width / 2
             y = (focalDistance / d_z) * y + cam.y + 250;
             
             displayPoints[i].x = x;
