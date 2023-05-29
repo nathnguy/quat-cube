@@ -39,12 +39,6 @@ void Cube::draw(SDL_Renderer* renderer) const {
     for (int i = 0; i < 4; ++i) {
         drawLine(renderer, displayPoints, i, (i+1) % 4);
     }
-    
-    // draw back
-    SDL_SetRenderDrawColor(renderer, COLORS[1][0], COLORS[1][1], COLORS[1][2], 255);
-    for (int i = 4; i < NUM_POINTS; ++i) {
-        drawLine(renderer, displayPoints, i, (i+1) % 4 + 4);
-    }
 
     // draw left side
     SDL_SetRenderDrawColor(renderer, COLORS[2][0], COLORS[2][1], COLORS[2][2], 255);
@@ -55,6 +49,12 @@ void Cube::draw(SDL_Renderer* renderer) const {
     SDL_SetRenderDrawColor(renderer, COLORS[3][0], COLORS[3][1], COLORS[3][2], 255);
     drawLine(renderer, displayPoints, 1, 6);
     drawLine(renderer, displayPoints, 2, 5);
+    
+    // draw back
+    SDL_SetRenderDrawColor(renderer, COLORS[1][0], COLORS[1][1], COLORS[1][2], 255);
+    for (int i = 4; i < NUM_POINTS; ++i) {
+        drawLine(renderer, displayPoints, i, (i+1) % 4 + 4);
+    }
     
 }
 
