@@ -71,6 +71,8 @@ void Cube::rotate(const Vector3D& axis, float radians) {
         
         delete vector; delete mult1; delete mult2;
     }
+    
+    delete quat; delete inverse;
 }
 
 // private
